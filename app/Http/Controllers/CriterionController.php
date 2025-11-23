@@ -12,43 +12,29 @@ class CriterionController extends Controller
      */
     public function index()
     {
-        // ログインユーザーが作成した評価軸のみ取得
         $criteria = auth()->user()->criteria()->orderBy('created_at', 'desc')->get();
-
         return view('criteria.index', compact('criteria'));
     }
-
-    /**
-     * Show the form for creating a new resource.
-     * 今回はモーダルで対応するので空でもOK
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
+        // 評価軸は1ユーザーあたり最大5個
+        if (auth()->user()->criteria()->count() >= 5) {
+            return redirect()->route('criteria.index')
+                ->with('error', '評価軸は1ユーザーあたり最大5個までです。');
+        }
+
         $request->validate([
             'name' => 'required|string|max:255',
-            'weight' => 'required|integer|min:1',
+            // 'weight' => 'required|integer|min:1|max:100', // これを削除
         ]);
 
-        auth()->user()->criteria()->create($request->only(['name', 'weight']));
+        // 作成（weightは10で固定）
+        auth()->user()->criteria()->create([
+            'name' => $request->name,
+            'weight' => 10,
+        ]);
 
         return redirect()->route('criteria.index')->with('success', '評価軸を登録しました。');
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Criterion $criterion)
-    {
-        // 今回は詳細画面不要なら省略可
-        return view('criteria.show', compact('criterion'));
     }
 
     /**
@@ -66,7 +52,7 @@ class CriterionController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'weight' => 'required|integer|min:1',
+            'weight' => 'required|integer|min:1|max:100',
         ]);
 
         $criterion->update($request->only(['name', 'weight']));
@@ -80,7 +66,6 @@ class CriterionController extends Controller
     public function destroy(Criterion $criterion)
     {
         $criterion->delete();
-
         return redirect()->route('criteria.index')->with('success', '評価軸を削除しました。');
     }
 }
