@@ -2,16 +2,25 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\HomeRedirectController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\CriterionController;
 use App\Http\Controllers\EvaluationController;
 
-// トップページ → /home にリダイレクト
-Route::get('/', function () {
-    return redirect()->route('home');
-});
 
-// ログイン
+// トップページ → ログイン状態で振り分け
+Route::get('/', function () {
+    return auth()->check()
+        ? redirect()->route('home')
+        : redirect()->route('landing');
+});
+// landing ページ（ログアウト時のトップページ）
+Route::get('/landing', function () {
+    return view('landing'); // resources/views/landing.blade.php を表示
+})->name('landing');
+
+
+// ログインフォーム
 Route::get('/login', [HomeController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [HomeController::class, 'login']);
 
@@ -22,9 +31,10 @@ Route::post('/logout', [HomeController::class, 'logout'])->name('logout');
 Route::get('/register', [HomeController::class, 'showRegisterForm'])->name('register');
 Route::post('/register', [HomeController::class, 'register']);
 
-
-// 認証済みのみアクセスできる /home
+// 認証済みのみアクセスできるルート
 Route::middleware('auth')->group(function () {
+
+    // ホームページ
     Route::get('/home', [HomeController::class, 'index'])->name('home');
 
     // Company リソース

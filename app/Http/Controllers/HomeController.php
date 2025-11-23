@@ -5,6 +5,18 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+class HomeRedirectController extends Controller
+{
+    // / にアクセスしたときに振り分け
+    public function __invoke()
+    {
+        if (auth()->check()) {
+            return redirect()->route('home');
+        }
+        return redirect()->route('landing');
+    }
+}
+
 class HomeController extends Controller
 {
     // /home
@@ -42,7 +54,7 @@ class HomeController extends Controller
     // ログインフォーム
     public function showLoginForm()
     {
-        return view('auth.login'); // AdminLTE の login.blade.php
+        return view('auth.login'); // resources/views/auth/login.blade.php
     }
 
     // ログイン処理
@@ -63,6 +75,6 @@ class HomeController extends Controller
     public function logout()
     {
         Auth::logout();
-        return redirect('/login');
+        return redirect()->route('landing');
     }
 }
