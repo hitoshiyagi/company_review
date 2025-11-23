@@ -3,31 +3,23 @@
 namespace App\Http\Controllers;
 
 use App\Models\Company;
+use App\Models\Criterion;
 use Illuminate\Http\Request;
 
 class CompanyController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * 会社一覧
      */
     public function index()
     {
-        // 会社を全件取得、最新登録順
-        $companies = Company::orderBy('created_at', 'desc')->get();
-
-        return view('companies.index', compact('companies'));
+        $companies = Company::with('evaluations')->orderBy('created_at', 'desc')->get();
+        $criteria = Criterion::all(); // 合計点数計算などで必要なら
+        return view('companies.index', compact('companies', 'criteria'));
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        return view('companies.create');
-    }
-
-    /**
-     * Store a newly created resource in storage.
+     * 新規会社登録（モーダルからPOST）
      */
     public function store(Request $request)
     {
@@ -36,48 +28,61 @@ class CompanyController extends Controller
             'description' => 'nullable|string',
         ]);
 
-        Company::create($request->only(['name', 'description']));
+        // 会社作成
+        $company = Company::create($request->only(['name', 'description']));
+
+        // 評価スコア保存
+        if ($request->has('scores')) {
+            foreach ($request->scores as $criterionId => $score) {
+                $company->evaluations()->create([
+                    'user_id' => auth()->id(),
+                    'criterion_id' => $criterionId,
+                    'score' => $score,
+                ]);
+            }
+        }
 
         return redirect()->route('companies.index')->with('success', '会社を登録しました。');
     }
 
+
     /**
-     * Display the specified resource.
+     * 詳細画面
      */
     public function show(Company $company)
     {
-        return view('companies.show', compact('company'));
+        // ログインユーザーの評価を取得
+        $evaluations = $company->evaluations()->where('user_id', auth()->id())->get()->keyBy('criterion_id');
+        $criteria = auth()->user()->criteria;
+
+        return view('companies.show', compact('company', 'evaluations', 'criteria'));
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * 編集画面
      */
     public function edit(Company $company)
     {
-        // ログインユーザーの評価軸を取得（nullの場合は空コレクション）
-        $criteria = auth()->user()->criteria ?? collect();
-
-        // 会社に対する評価を取得（nullの場合は空コレクション）
-        $evaluations = $company->evaluations()->where('user_id', auth()->id())->get() ?? collect();
+        $criteria = auth()->user()->criteria()->orderBy('created_at', 'desc')->get();
+        $evaluations = $company->evaluations()->where('user_id', auth()->id())->get()->keyBy('criterion_id');
 
         return view('companies.edit', compact('company', 'criteria', 'evaluations'));
     }
 
     /**
-     * Update the specified resource in storage.
+     * 更新（会社情報 + 評価スコア）
      */
     public function update(Request $request, Company $company)
     {
-        // 会社情報のバリデーション
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
         ]);
 
-        // 会社情報を更新
+        // 会社情報更新
         $company->update($request->only(['name', 'description']));
 
-        // 評価スコアを更新
+        // 評価スコア更新
         if ($request->has('scores')) {
             foreach ($request->scores as $criterionId => $score) {
                 $company->evaluations()->updateOrCreate(
@@ -91,12 +96,25 @@ class CompanyController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * 削除
      */
     public function destroy(Company $company)
     {
         $company->delete();
-
         return redirect()->route('companies.index')->with('success', '会社を削除しました。');
+    }
+
+    public function ranking()
+    {
+        // 会社を全取得 → evaluations を一緒に読み込む
+        $companies = Company::with('evaluations')->get();
+
+        // 合計スコアを計算して並び替え
+        $ranking = $companies->map(function ($company) {
+            $company->total_score = $company->evaluations->sum('score');
+            return $company;
+        })->sortByDesc('total_score')->values(); // 順位を振り直すために values()
+
+        return view('companies.ranking', compact('ranking'));
     }
 }

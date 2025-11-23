@@ -10,44 +10,48 @@
 @section('content')
 <div class="card">
     <div class="card-header">
-        <!-- モーダルを開くボタン -->
-        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createCompanyModal">
+        <!-- モーダル呼び出しボタン -->
+        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createCompanyModal">
             新規会社登録
         </button>
     </div>
 
-    <!-- モーダル -->
-    <div class="modal fade" id="createCompanyModal" tabindex="-1" aria-labelledby="createCompanyModalLabel" aria-hidden="true">
+    <!-- 新規会社登録モーダル -->
+    <div class="modal fade" id="createCompanyModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <form action="{{ route('companies.store') }}" method="POST">
                     @csrf
                     <div class="modal-header">
-                        <h5 class="modal-title" id="createCompanyModalLabel">会社新規登録</h5>
-                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                            <i class="fas fa-times"></i>
-                        </button>
+                        <h5 class="modal-title">会社新規登録</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
-                        {{-- バリデーションエラー --}}
-                        @if($errors->any())
-                        <div class="alert alert-danger">
-                            <ul>
-                                @foreach($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
+                        <div class="mb-3">
+                            <label>会社名</label>
+                            <input type="text" name="name" class="form-control" required>
                         </div>
-                        @endif
+                        <div class="mb-3">
+                            <label>説明</label>
+                            <textarea name="description" class="form-control"></textarea>
+                        </div>
 
-                        <div class="mb-3">
-                            <label for="name" class="form-label">会社名</label>
-                            <input type="text" name="name" id="name" class="form-control" required>
+                        <h5>評価スコア（各10点満点）</h5>
+                        @if($criteria->isEmpty())
+                        <p class="text-muted">評価軸が登録されていません。まず評価軸を作成してください。</p>
+                        @else
+                        @foreach($criteria->take(5) as $criterion) {{-- 最大5項目 --}}
+                        <div class="mb-2">
+                            <label>{{ $criterion->name }}</label>
+                            <input type="number"
+                                name="scores[{{ $criterion->id }}]"
+                                min="0"
+                                max="10"
+                                class="form-control"
+                                value="0">
                         </div>
-                        <div class="mb-3">
-                            <label for="description" class="form-label">説明</label>
-                            <textarea name="description" id="description" class="form-control"></textarea>
-                        </div>
+                        @endforeach
+                        @endif
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary">登録</button>
@@ -58,12 +62,15 @@
         </div>
     </div>
 
-    <!-- 会社一覧テーブル -->
+
     <div class="card-body">
+        @if(session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+        @endif
+
         <table class="table table-bordered table-striped">
             <thead>
                 <tr>
-                    <th>ID</th>
                     <th>会社名</th>
                     <th>説明</th>
                     <th>合計点数</th>
@@ -76,7 +83,6 @@
                 $totalScore = $company->evaluations->sum('score');
                 @endphp
                 <tr>
-                    <td>{{ $company->id }}</td>
                     <td>{{ $company->name }}</td>
                     <td>{{ $company->description }}</td>
                     <td>{{ $totalScore }}</td>
@@ -91,11 +97,6 @@
                     </td>
                 </tr>
                 @endforeach
-                @if($companies->isEmpty())
-                <tr>
-                    <td colspan="5" class="text-center">登録されている会社はありません</td>
-                </tr>
-                @endif
             </tbody>
         </table>
     </div>
@@ -104,10 +105,4 @@
 
 @section('js')
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    var createModal = document.getElementById('createCompanyModal');
-    createModal.addEventListener('shown.bs.modal', function() {
-        document.getElementById('name').focus();
-    });
-</script>
 @stop

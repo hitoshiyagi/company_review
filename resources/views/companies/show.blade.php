@@ -1,4 +1,3 @@
-{{-- resources/views/companies/show.blade.php --}}
 @extends('adminlte::page')
 
 @section('title', '会社詳細')
@@ -18,6 +17,19 @@
         <p><strong>説明:</strong> {{ $company->description }}</p>
         <p><strong>作成日:</strong> {{ $company->created_at }}</p>
         <p><strong>更新日:</strong> {{ $company->updated_at }}</p>
+
+        <hr>
+        <h4>評価スコア</h4>
+        @if($criteria->isEmpty())
+        <p>評価軸が登録されていません。</p>
+        @else
+        <ul>
+            @foreach($criteria as $criterion)
+            <li>{{ $criterion->name }}: {{ $evaluations[$criterion->id]->score ?? '未評価' }}/10</li>
+            @endforeach
+        </ul>
+        <p><strong>合計点数:</strong> {{ $evaluations->sum('score') ?? 0 }}/{{ $criteria->count() * 10 }}</p>
+        @endif
     </div>
     <div class="card-footer">
         <a href="{{ route('companies.edit', $company) }}" class="btn btn-warning">編集</a>

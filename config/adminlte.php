@@ -302,7 +302,7 @@ return [
         ],
         [
             'text' => '総合スコア',
-            'route' => 'evaluations.index',
+            'route' => 'companies.ranking',
             'icon' => 'fas fa-chart-bar',
         ],
     ],

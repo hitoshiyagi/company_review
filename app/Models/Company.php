@@ -9,9 +9,8 @@ class Company extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'description', 'photo', 'pdf'];
+    protected $fillable = ['name', 'description'];
 
-    // Company は複数の Evaluation を持つ
     public function evaluations()
     {
         return $this->hasMany(Evaluation::class);

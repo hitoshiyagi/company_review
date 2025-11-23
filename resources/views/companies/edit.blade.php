@@ -45,17 +45,17 @@
 
         {{-- 評価スコア --}}
         <h3>評価スコア</h3>
-
+        <p>各項目１０点満点で評価する</p>
         @if($criteria->isEmpty())
         <p class="text-muted">評価軸が登録されていません。まず評価軸を作成してください。</p>
         @else
         @foreach($criteria as $criterion)
         <div class="mb-2">
-            <label>{{ $criterion->name }} (重み: {{ $criterion->weight }})</label>
+            <label>{{ $criterion->name }}</label>
             <input type="number"
                 name="scores[{{ $criterion->id }}]"
                 min="0"
-                max="100"
+                max="10"
                 class="form-control"
                 value="{{ old('scores.'.$criterion->id, $evaluations[$criterion->id]->score ?? '') }}">
         </div>
