@@ -135,7 +135,7 @@
         }
 
         .logo img {
-            height: 40px;
+            height: 60px;
             /* ロゴの高さ調整 */
         }
 
@@ -379,7 +379,7 @@
     <header>
         <div class="container header-inner">
             <div class="logo">
-                <img src="JS白背景-removebg-preview.png" alt="JobScore Logo">
+                <img src="{{ asset('vendor/adminlte/dist/img/logo.png') }}" alt="Logo">
             </div>
             <nav>
                 <a href="{{ route('register') }}" class="btn btn-primary">無料で始める</a>
@@ -393,7 +393,7 @@
             <div class="hero-text">
                 <h1>あなたの転職判断を<br>シンプルに、視覚化します。</h1>
                 <p>複数の企業情報もこれ一つで整理。<br>自分だけの評価軸で、運命の1社をスコアとランキングで導き出します。</p>
-                <a href="#cta" class="btn btn-primary" style="background: white; color: var(--primary-color);">今すぐ比較を始める</a>
+                <a href="{{ route('register') }}" class="btn btn-primary" style="background: white; color: var(--primary-color);">今すぐ比較を始める</a>
             </div>
             <div class="hero-image">
                 <div class="app-mockup">
@@ -486,16 +486,18 @@
         <div class="container">
             <h2>あなたの転職判断をサポートします</h2>
             <p>まずは無料で、気になる企業を登録してみましょう。</p>
-            <a href="#" class="btn btn-primary" style="background: var(--white); color: var(--primary-color); font-size: 1.2rem; padding: 15px 40px;">無料で比較を始める</a>
+            <a href="{{ route('register') }}" class="btn btn-primary" style="background: var(--white); color: var(--primary-color); font-size: 1.2rem; padding: 15px 40px;">無料で比較を始める</a>
         </div>
     </section>
 
     <footer>
         <div class="container">
             <div class="logo">
-                <img src="JS白背景-removebg-preview.png" alt="JobScore Logo" style="height: 30px; filter: brightness(0) invert(1); opacity: 0.7;">
+                <div class="logo">
+                    <img src="{{ asset('vendor/adminlte/dist/img/logo_W.png') }}" alt="Logo">
+                </div>
             </div>
-            <p>&copy; 2024 JobScore. All Rights Reserved.</p>
+            <p>&copy; 2025 JobScore. All Rights Reserved.</p>
         </div>
     </footer>
 
