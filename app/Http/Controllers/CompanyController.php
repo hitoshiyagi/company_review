@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Company;
 use App\Models\Criterion;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class CompanyController extends Controller
 {
@@ -26,10 +27,11 @@ class CompanyController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'type' => ['required', Rule::in(Company::TYPES)],
         ]);
 
         // 会社作成
-        $company = Company::create($request->only(['name', 'description']));
+        $company = Company::create($request->only(['name', 'description', 'type']));
 
         // 評価スコア保存
         if ($request->has('scores')) {
@@ -77,10 +79,11 @@ class CompanyController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'type' => ['required', Rule::in(Company::TYPES)],
         ]);
 
         // 会社情報更新
-        $company->update($request->only(['name', 'description']));
+        $company->update($request->only(['name', 'description', 'type']));
 
         // 評価スコア更新
         if ($request->has('scores')) {

@@ -135,9 +135,9 @@
         <h3 class="card-title">{{ $company->name }}</h3>
     </div>
     <div class="card-body">
-        <p><strong>ID:</strong> {{ $company->id }}</p>
-        <p><strong>会社名:</strong> {{ $company->name }}</p>
+
         <p><strong>説明:</strong> {{ $company->description }}</p>
+        <p><strong>状況:</strong> {{ $company->type_label }}</p>
         <p><strong>作成日:</strong> {{ $company->created_at }}</p>
         <p><strong>更新日:</strong> {{ $company->updated_at }}</p>
 

@@ -370,6 +370,63 @@
             .section-title {
                 font-size: 1.6rem;
             }
+
+
+            @media (max-width: 768px) {
+                .pc-only {
+                    display: none !important;
+                }
+
+                .sp-only {
+                    display: ;
+                }
+            }
+
+            /* --- ハンバーガーメニュー --- */
+            .hamburger {
+                width: 28px;
+                cursor: pointer;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                height: 20px;
+            }
+
+            .hamburger span {
+                display: block;
+                height: 3px;
+                background: var(--primary-color);
+                border-radius: 3px;
+            }
+
+            /* --- モバイルメニュー --- */
+            .mobile-menu {
+                display: none;
+                position: absolute;
+                right: 20px;
+                top: 70px;
+                background: white;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                border-radius: 8px;
+                padding: 10px 0;
+                width: 150px;
+                z-index: 999;
+            }
+
+            .mobile-menu li {
+                list-style: none;
+            }
+
+            .mobile-menu a {
+                display: block;
+                padding: 12px 20px;
+                color: var(--primary-color);
+                font-weight: bold;
+            }
+
+            .mobile-menu a:hover {
+                background: var(--bg-light);
+            }
         }
     </style>
 </head>
@@ -381,9 +438,22 @@
             <div class="logo">
                 <img src="{{ asset('vendor/adminlte/dist/img/logo.png') }}" alt="Logo">
             </div>
-            <nav>
-                <a href="{{ route('register') }}" class="btn btn-primary">無料で始める</a>
-                <a href="{{ route('login') }}" class="btn btn-success">ログインする</a>
+            <nav class="nav-menu">
+                <a href="{{ route('register') }}" class="btn btn-primary pc-only">無料で始める</a>
+                <a href="{{ route('login') }}" class="btn btn-success pc-only">ログインする</a>
+
+                <!-- ハンバーガー（スマホ）-->
+                <div class="hamburger sp-only" id="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+
+                <!-- ハンバーガーメニュー展開部分（テキストリンク）-->
+                <ul class="mobile-menu sp-only" id="mobileMenu">
+                    <li><a href="{{ route('register') }}">無料で始める</a></li>
+                    <li><a href="{{ route('login') }}">ログインする</a></li>
+                </ul>
             </nav>
         </div>
     </header>
@@ -500,6 +570,17 @@
             <p>&copy; 2025 JobScore. All Rights Reserved.</p>
         </div>
     </footer>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const hamburger = document.getElementById("hamburger");
+    const mobileMenu = document.getElementById("mobileMenu");
+
+    hamburger.addEventListener("click", function () {
+        mobileMenu.style.display =
+            mobileMenu.style.display === "block" ? "none" : "block";
+    });
+});
+</script>
 
 </body>
 

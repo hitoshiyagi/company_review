@@ -164,7 +164,20 @@
             <label for="description" class="form-label">説明</label>
             <textarea name="description" id="description" class="form-control">{{ old('description', $company->description) }}</textarea>
         </div>
-
+        <div class="mb-4">
+            <select name="type" class="form-control">
+                <option value="interest" {{ old('type', $company->type ?? 'interest') == 'interest' ? 'selected' : '' }}>
+                    見学／気になる企業
+                </option>
+                <option value="desired" {{ old('type', $company->type ?? '') == 'desired' ? 'selected' : '' }}>
+                    志望企業
+                </option>
+                <option value="current" {{ old('type', $company->type ?? '') == 'current' ? 'selected' : '' }}>
+                    現職
+                </option>
+            </select>
+        </div>
+        
         {{-- 評価スコア --}}
         <h3>評価スコア</h3>
         <p>各項目１０点満点で評価する</p>

@@ -126,7 +126,6 @@
         transform: translateY(-2px);
         box-shadow: 0 3px 6px rgba(44, 177, 188, 0.3);
     }
-    
 </style>
 @stop
 @section('content')
@@ -156,6 +155,19 @@
                         <div class="mb-3">
                             <label>説明</label>
                             <textarea name="description" class="form-control"></textarea>
+                        </div>
+                        <div class="mb-4">
+                            <select name="type" class="form-control">
+                                <option value="interest" {{ old('type', $company->type ?? 'interest') == 'interest' ? 'selected' : '' }}>
+                                    見学／気になる企業
+                                </option>
+                                <option value="desired" {{ old('type', $company->type ?? '') == 'desired' ? 'selected' : '' }}>
+                                    志望企業
+                                </option>
+                                <option value="current" {{ old('type', $company->type ?? '') == 'current' ? 'selected' : '' }}>
+                                    現職
+                                </option>
+                            </select>
                         </div>
 
                         <h5>評価スコア（各10点満点）</h5>
@@ -195,6 +207,7 @@
                 <tr>
                     <th>会社名</th>
                     <th>説明</th>
+                    <th>状況</th>
                     <th>合計点数</th>
                     <th>操作</th>
                 </tr>
@@ -207,6 +220,7 @@
                 <tr>
                     <td>{{ $company->name }}</td>
                     <td>{{ $company->description }}</td>
+                    <td>{{ $company->type_label }}</td>
                     <td>{{ $totalScore }}</td>
                     <td>
                         <a href="{{ route('companies.show', $company) }}" class="btn btn-info btn-sm">詳細</a>
