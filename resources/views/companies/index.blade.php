@@ -196,7 +196,6 @@
         </div>
     </div>
 
-
     <div class="card-body">
         @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
@@ -214,14 +213,12 @@
             </thead>
             <tbody>
                 @foreach($companies as $company)
-                @php
-                $totalScore = $company->evaluations->sum('score');
-                @endphp
+
                 <tr>
                     <td>{{ $company->name }}</td>
                     <td>{{ $company->description }}</td>
                     <td>{{ $company->type_label }}</td>
-                    <td>{{ $totalScore }}</td>
+                    <td>{{ $company->total_score }}</td>
                     <td>
                         <a href="{{ route('companies.show', $company) }}" class="btn btn-info btn-sm">詳細</a>
                         <a href="{{ route('companies.edit', $company) }}" class="btn btn-warning btn-sm">編集</a>

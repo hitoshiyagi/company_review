@@ -21,13 +21,15 @@ class CriterionController extends Controller
         }
 
         $request->validate([
-            'name' => 'required|string|max:255',
+            'name'   => 'required|string|max:255',
+            'weight' => 'required|integer|min:0|max:10'
         ]);
 
         auth()->user()->criteria()->create([
-            'name' => $request->name,
-            'weight' => 5, // 固定値 あとで修正
+            'name'   => $request->name,
+            'weight' => $request->weight
         ]);
+
 
         return redirect()->route('criteria.index')->with('success', '評価軸を登録しました。');
     }
@@ -40,14 +42,14 @@ class CriterionController extends Controller
     public function update(Request $request, Criterion $criterion)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'weight' => 'required|numeric|min:0'
         ]);
 
         $criterion->update([
-            'name' => $request->name,
+            'weight' => $request->weight
         ]);
 
-        return redirect()->route('criteria.index')->with('success', '評価軸を更新しました。');
+        return redirect()->route('criteria.index');
     }
 
     public function destroy(Criterion $criterion)

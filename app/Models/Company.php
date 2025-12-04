@@ -41,4 +41,12 @@ class Company extends Model
             return $evaluation->score * $evaluation->criterion->weight;
         });
     }
+
+    public function getTotalScoreAttribute()
+    {
+        return $this->evaluations->sum(function ($evaluation) {
+            return $evaluation->score * ($evaluation->criterion->weight ?? 1);
+        });
+    }
+
 }

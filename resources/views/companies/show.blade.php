@@ -148,10 +148,32 @@
         @else
         <ul>
             @foreach($criteria as $criterion)
-            <li>{{ $criterion->name }}: {{ $evaluations[$criterion->id]->score ?? '未評価' }}/10</li>
+            <li>
+                {{ $criterion->name }} :
+                @isset($evaluations[$criterion->id]->score)
+                {{ $evaluations[$criterion->id]->score * $criterion->weight }}
+                @else
+                未評価
+                @endisset
+            </li>
             @endforeach
         </ul>
-        <p><strong>合計点数:</strong> {{ $evaluations->sum('score') ?? 0 }}/{{ $criteria->count() * 10 }}</p>
+        @php
+        $total = 0;
+        $max = 0;
+        @endphp
+
+        @foreach($criteria as $criterion)
+        @php
+        $score = $evaluations[$criterion->id]->score ?? 0;
+        $weightedScore = $score * $criterion->weight;
+        $total += $weightedScore;
+
+        $max += 10 * $criterion->weight;
+        @endphp
+        @endforeach
+
+        <p><strong>合計点数:</strong> {{ $total }} / {{ $max }}</p>
         @endif
     </div>
     <div class="card-footer">

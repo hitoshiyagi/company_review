@@ -177,25 +177,50 @@
                 </option>
             </select>
         </div>
-        
+
         {{-- 評価スコア --}}
-        <h3>評価スコア</h3>
-        <p>各項目１０点満点で評価する</p>
+        <h3 class="mt-4 mb-2">評価スコア</h3>
+        <p>各項目を１０点満点で評価する</p>
+
         @if($criteria->isEmpty())
-        <p class="text-muted">評価軸が登録されていません。まず評価軸を作成してください。</p>
+        <p class="text-muted">
+            評価軸が登録されていません。まず評価軸を作成してください。
+        </p>
         @else
-        @foreach($criteria as $criterion)
-        <div class="mb-2">
-            <label>{{ $criterion->name }}</label>
-            <input type="number"
-                name="scores[{{ $criterion->id }}]"
-                min="0"
-                max="10"
-                class="form-control"
-                value="{{ old('scores.'.$criterion->id, $evaluations[$criterion->id]->score ?? '') }}">
-        </div>
-        @endforeach
+
+        <table class="table table-bordered align-middle">
+            <thead>
+                <tr>
+                    <th>項目名</th>
+                    <th>スコア（0〜10）</th>
+                    <th>評価軸の重さ</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($criteria as $criterion)
+                <tr>
+                    {{-- 項目名 --}}
+                    <td>{{ $criterion->name }}</td>
+
+                    {{-- スコア入力 --}}
+                    <td>
+                        <input type="number"
+                            name="scores[{{ $criterion->id }}]"
+                            min="0"
+                            max="10"
+                            class="form-control"
+                            value="{{ old('scores.'.$criterion->id, $evaluations[$criterion->id]->score ?? '') }}"
+                            style="max-width:160px;">
+                    </td>
+                    <td>{{ $criterion->weight }}</td>
+
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+
         @endif
+
 
         <button type="submit" class="btn btn-primary mt-3">更新する</button>
         <a href="{{ route('companies.index') }}" class="btn btn-secondary mt-3">戻る</a>

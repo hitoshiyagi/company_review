@@ -145,13 +145,25 @@
                         <h5 class="modal-title">評価軸登録</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
+
                     <div class="modal-body">
                         <div class="mb-3">
                             <label>名前</label>
                             <input type="text" name="name" class="form-control" required>
                         </div>
-                        {{-- 重みは固定なので入力欄は削除 --}}
+
+                        <div class="mb-3">
+                            <label>評価軸の重み（0〜10）</label>
+                            <input type="number"
+                                name="weight"
+                                class="form-control"
+                                min="0"
+                                max="10"
+                                value="5"
+                                required>
+                        </div>
                     </div>
+
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary">登録</button>
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
@@ -160,6 +172,7 @@
             </div>
         </div>
     </div>
+
 
     <div class="card-body">
         @if(session('success'))
@@ -173,6 +186,7 @@
             <thead>
                 <tr>
                     <th>名前</th>
+                    <th>評価軸の重さ</th>
                     <th>操作</th>
                 </tr>
             </thead>
@@ -180,6 +194,7 @@
                 @foreach($criteria as $criterion)
                 <tr>
                     <td>{{ $criterion->name }}</td>
+                    <td>{{ $criterion->weight }}</td>
                     <td>
                         {{-- 編集モーダル --}}
                         <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal{{ $criterion->id }}">編集</button>
@@ -207,6 +222,16 @@
                                                 <label>名前</label>
                                                 <input type="text" name="name" class="form-control" value="{{ $criterion->name }}" required>
                                             </div>
+                                            <div class="mb-3">
+                                                <label>評価軸の重み（0〜10）</label>
+                                                <input type="number"
+                                                    name="weight"
+                                                    class="form-control"
+                                                    min="0"
+                                                    max="10"
+                                                    value="5"
+                                                    required>
+                                            </div>
                                         </div>
                                         <div class="modal-footer">
                                             <button type="submit" class="btn btn-primary">更新</button>
@@ -216,7 +241,6 @@
                                 </div>
                             </div>
                         </div>
-                        {{-- /編集モーダル --}}
                     </td>
                 </tr>
                 @endforeach
