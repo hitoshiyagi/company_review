@@ -26,7 +26,7 @@ class CriterionController extends Controller
 
         auth()->user()->criteria()->create([
             'name' => $request->name,
-            'weight' => 10, // 固定値
+            'weight' => 5, // 固定値 あとで修正
         ]);
 
         return redirect()->route('criteria.index')->with('success', '評価軸を登録しました。');

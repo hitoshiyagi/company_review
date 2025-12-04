@@ -109,14 +109,16 @@ class CompanyController extends Controller
 
     public function ranking()
     {
-        // 会社を全取得 → evaluations を一緒に読み込む
-        $companies = Company::with('evaluations')->get();
+        // criterion まで一緒にロード
+        $companies = Company::with('evaluations.criterion')->get();
 
-        // 合計スコアを計算して並び替え
         $ranking = $companies->map(function ($company) {
-            $company->total_score = $company->evaluations->sum('score');
+            $company->total_score = $company->evaluations->sum(function ($evaluation) {
+                return $evaluation->score * ($evaluation->criterion->weight ?? 1);
+            });
+
             return $company;
-        })->sortByDesc('total_score')->values(); // 順位を振り直すために values()
+        })->sortByDesc('total_score')->values();
 
         return view('companies.ranking', compact('ranking'));
     }

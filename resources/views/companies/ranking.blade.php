@@ -143,21 +143,20 @@
                 @foreach($ranking as $index => $company)
                 <tr>
                     <td>
-                        @if($index === 0)
-                        🥇 1位
-                        @elseif($index === 1)
-                        🥈 2位
-                        @elseif($index === 2)
-                        🥉 3位
-                        @else
-                        {{ $index + 1 }} 位
+                        @if($index === 0) 🥇 1位
+                        @elseif($index === 1) 🥈 2位
+                        @elseif($index === 2) 🥉 3位
+                        @else {{ $index + 1 }} 位
                         @endif
                     </td>
+
                     <td>{{ $company->name }}</td>
+
                     <td>{{ $company->total_score }}</td>
                 </tr>
                 @endforeach
             </tbody>
+
         </table>
     </div>
 </div>

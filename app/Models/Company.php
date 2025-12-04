@@ -34,4 +34,11 @@ class Company extends Model
     {
         return $this->hasMany(Evaluation::class);
     }
+
+    public function weightedScore()
+    {
+        return $this->evaluations->sum(function ($evaluation) {
+            return $evaluation->score * $evaluation->criterion->weight;
+        });
+    }
 }
