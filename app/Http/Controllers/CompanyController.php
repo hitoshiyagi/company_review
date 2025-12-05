@@ -14,8 +14,13 @@ class CompanyController extends Controller
      */
     public function index()
     {
-        $companies = Company::with('evaluations')->orderBy('created_at', 'desc')->get();
-        $criteria = Criterion::all(); // 合計点数計算などで必要なら
+        $companies = auth()->user()
+            ->companies()
+            ->with('evaluations')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $criteria = auth()->user()->criteria;
         return view('companies.index', compact('companies', 'criteria'));
     }
 
@@ -31,7 +36,9 @@ class CompanyController extends Controller
         ]);
 
         // 会社作成
-        $company = Company::create($request->only(['name', 'description', 'type']));
+        $company = auth()->user()->companies()->create(
+            $request->only(['name', 'description', 'type'])
+        );
 
         // 評価スコア保存
         if ($request->has('scores')) {
@@ -53,6 +60,10 @@ class CompanyController extends Controller
      */
     public function show(Company $company)
     {
+        if ($company->user_id !== auth()->id()) {
+            abort(403);
+        }
+
         // ログインユーザーの評価を取得
         $evaluations = $company->evaluations()->where('user_id', auth()->id())->get()->keyBy('criterion_id');
         $criteria = auth()->user()->criteria;
@@ -65,6 +76,9 @@ class CompanyController extends Controller
      */
     public function edit(Company $company)
     {
+        if ($company->user_id !== auth()->id()) {
+            abort(403);
+        }
         $criteria = auth()->user()->criteria()->orderBy('created_at', 'desc')->get();
         $evaluations = $company->evaluations()->where('user_id', auth()->id())->get()->keyBy('criterion_id');
 
@@ -76,6 +90,10 @@ class CompanyController extends Controller
      */
     public function update(Request $request, Company $company)
     {
+        if ($company->user_id !== auth()->id()) {
+            abort(403);
+        }
+
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -103,13 +121,18 @@ class CompanyController extends Controller
      */
     public function destroy(Company $company)
     {
+        if ($company->user_id !== auth()->id()) {
+            abort(403);
+        }
         $company->delete();
         return redirect()->route('companies.index')->with('success', '会社を削除しました。');
     }
 
     public function ranking()
     {
-        $ranking = Company::with('evaluations.criterion')
+        $ranking = auth()->user()
+            ->companies()
+            ->with('evaluations.criterion')
             ->get()
             ->sortByDesc('total_score')
             ->values();

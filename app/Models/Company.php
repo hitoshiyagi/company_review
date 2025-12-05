@@ -12,10 +12,10 @@ class Company extends Model
     protected $fillable = [
         'name',
         'description',
+        'type',
         'photo',
         'pdf',
-        'type',
-        'favorite_rank'
+        'user_id',
     ];
 
     public const TYPES = ['interest', 'desired', 'current'];
@@ -49,4 +49,8 @@ class Company extends Model
         });
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
