@@ -130,13 +130,50 @@ class CompanyController extends Controller
 
     public function ranking()
     {
-        $ranking = auth()->user()
-            ->companies()
-            ->with('evaluations.criterion')
+        $ranking = Company::with('evaluations.criterion')
             ->get()
             ->sortByDesc('total_score')
             ->values();
 
-        return view('companies.ranking', compact('ranking'));
+        $criteria = auth()->user()->criteria;
+
+        return view('companies.ranking', compact('ranking', 'criteria'));
+    }
+    public function compare(Company $company)
+    {
+        $user = auth()->user();
+
+        // 現職を取得
+        $currentCompany = Company::where('type', 'current')->first() ?? $company;
+
+
+        $criteria = $user->criteria;
+
+        // 各会社のスコアを配列化
+        $currentScores = $criteria->map(function ($criterion) use ($currentCompany, $user) {
+            return optional(
+                $currentCompany->evaluations
+                    ->where('criterion_id', $criterion->id)
+                    ->where('user_id', $user->id)
+                    ->first()
+            )->score ?? 0;
+        });
+
+        $targetScores = $criteria->map(function ($criterion) use ($company, $user) {
+            return optional(
+                $company->evaluations
+                    ->where('criterion_id', $criterion->id)
+                    ->where('user_id', $user->id)
+                    ->first()
+            )->score ?? 0;
+        });
+
+        return view('companies.compare', compact(
+            'company',
+            'currentCompany',
+            'criteria',
+            'currentScores',
+            'targetScores'
+        ));
     }
 }

@@ -57,4 +57,5 @@ class CriterionController extends Controller
         $criterion->delete();
         return redirect()->route('criteria.index')->with('success', '評価軸を削除しました。');
     }
+
 }

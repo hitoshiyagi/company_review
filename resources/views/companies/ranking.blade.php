@@ -153,6 +153,13 @@
                     <td>{{ $company->name }}</td>
 
                     <td>{{ $company->total_score }}</td>
+                    <td>
+                        <a href="{{ route('companies.compare', $company->id) }}" class="btn btn-info">
+                            比較
+                        </a>
+                    </td>
+
+
                 </tr>
                 @endforeach
             </tbody>
