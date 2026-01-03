@@ -20,9 +20,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //  if(\App::environment(['production'])){
-        //     \URL::forceScheme('https');
-        //  }
-        \URL::forceScheme('https');
+        // config('app.env') だけでなく、Herokuの特性を考えて強制力を上げます
+        if (config('app.env') === 'production' || $this->app->environment('production')) {
+            \URL::forceScheme('https');
+        }
     }
 }
