@@ -17,7 +17,11 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        // 条件を無視して、とにかく全部HTTPSにする
-        \URL::forceScheme('https');
+    // 条件を無視して、とにかく全部HTTPSにする
+    public function boot(): void
+    {
+        // 100%確実に実行されるよう、ファサードを直接叩く
+        \Illuminate\Support\Facades\URL::forceScheme('https');
+    }
     }
 }
