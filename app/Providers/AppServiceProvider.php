@@ -17,9 +17,7 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        // 開発環境以外（Herokuなど）では、全てのURL生成を強制的にHTTPSにする
-        if (app()->environment('production')) {
-            \URL::forceScheme('https');
-        }
+        // 条件を無視して、とにかく全部HTTPSにする
+        \URL::forceScheme('https');
     }
 }
