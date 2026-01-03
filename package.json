@@ -2,8 +2,9 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "dev": "vite"
-        },
+        "dev": "vite",
+        "build": "vite build"
+    },
     "devDependencies": {
         "@popperjs/core": "^2.11.6",
         "axios": "^1.1.2",
