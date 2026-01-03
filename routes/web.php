@@ -1,12 +1,16 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\HomeRedirectController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\CriterionController;
 use App\Http\Controllers\EvaluationController;
 
+if (app()->environment('production')) {
+    URL::forceScheme('https');
+}
 
 // トップページ → ログイン状態で振り分け
 Route::get('/', function () {
