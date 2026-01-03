@@ -8,9 +8,7 @@ use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\CriterionController;
 use App\Http\Controllers\EvaluationController;
 
-if (app()->environment('production')) {
-    URL::forceScheme('https');
-}
+URL::forceScheme('https');
 
 // トップページ → ログイン状態で振り分け
 Route::get('/', function () {
