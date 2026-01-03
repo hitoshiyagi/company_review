@@ -8,19 +8,20 @@ use Illuminate\Http\Request;
 class TrustProxies extends Middleware
 {
     /**
-     * The trusted proxies for this application.
+     * このアプリを信頼するプロキシ（Heroku）の設定
      *
      * @var array<int, string>|string|null
      */
+    // ★ここを null や array から '*' に書き換えます
     protected $proxies = '*';
 
     /**
-     * The headers that should be used to detect proxies.
+     * 使用するヘッダーの設定
      *
      * @var int
      */
     protected $headers =
-        Request::HEADER_X_FORWARDED_FOR |
+    Request::HEADER_X_FORWARDED_FOR |
         Request::HEADER_X_FORWARDED_HOST |
         Request::HEADER_X_FORWARDED_PORT |
         Request::HEADER_X_FORWARDED_PROTO |
