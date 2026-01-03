@@ -20,14 +20,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // これを追記：Herokuのプロキシヘッダー（X-Forwarded-Proto）をチェックする
-        if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
-            \URL::forceScheme('https');
-        }
+        // 条件を付けず、URL生成をすべて HTTPS に強制する命令です
+        \URL::forceScheme('https');
 
-        // もしくはこれだけでもOK（本番環境なら強制）
-        if (config('app.env') === 'production') {
-            \URL::forceScheme('https');
+        // これも追加してください（RequestオブジェクトにHTTPSであることを強制的に教えます）
+        if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
+            $this->app['request']->server->set('HTTPS', true);
         }
     }
 }
