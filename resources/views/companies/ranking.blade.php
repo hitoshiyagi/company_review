@@ -1,4 +1,4 @@
-@extends('adminlte::page')
+<!-- @extends('adminlte::page')
 
 @section('title', '総合スコアランキング')
 
@@ -166,5 +166,193 @@
 
         </table>
     </div>
+</div>
+@stop -->
+
+@extends('adminlte::page')
+
+@section('title', '総合スコアランキング')
+
+@section('content_header')
+<div class="d-flex align-items-center justify-content-between">
+    <h1 class="font-weight-bold text-dark"><i class="fas fa-trophy text-warning mr-2"></i>総合ランキング</h1>
+    <span class="badge badge-pill badge-dark px-3 py-2">全 {{ count($ranking) }} 社比較中</span>
+</div>
+@stop
+
+@section('css')
+<style>
+    /* 共通設定（既存のフォント・ボタン設定と統合） */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Sawarabi+Gothic&display=swap');
+
+    body,
+    .wrapper {
+        font-family: 'Sawarabi Gothic', 'Inter', sans-serif !important;
+        background-color: #f4f7f6 !important;
+    }
+
+    /* --- TOP 3 カードデザイン --- */
+    .podium-container {
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+        gap: 20px;
+        margin-bottom: 40px;
+        padding-top: 20px;
+    }
+
+    .podium-card {
+        background: white;
+        border-radius: 20px;
+        text-align: center;
+        padding: 25px 15px;
+        flex: 1;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s ease;
+        position: relative;
+        border: 2px solid transparent;
+    }
+
+    .podium-card:hover {
+        transform: translateY(-5px);
+    }
+
+    /* 1位を最大にする */
+    .rank-1 {
+        order: 2;
+        min-height: 280px;
+        border-color: #FFD700;
+        z-index: 2;
+    }
+
+    .rank-2 {
+        order: 1;
+        min-height: 240px;
+        border-color: #C0C0C0;
+    }
+
+    .rank-3 {
+        order: 3;
+        min-height: 220px;
+        border-color: #CD7F32;
+    }
+
+    .medal-icon {
+        font-size: 3rem;
+        display: block;
+        margin-bottom: 10px;
+    }
+
+    .company-name {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+        color: #334155;
+    }
+
+    .score-display {
+        font-family: 'Inter', sans-serif;
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #2CB1BC;
+        line-height: 1;
+    }
+
+    .score-unit {
+        font-size: 0.9rem;
+        margin-left: 4px;
+    }
+
+    /* --- 4位以下のリストデザイン --- */
+    .ranking-list {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    }
+
+    .ranking-item {
+        display: flex;
+        align-items: center;
+        padding: 15px 25px;
+        border-bottom: 1px solid #f1f5f9;
+        transition: background 0.2s;
+    }
+
+    .ranking-item:hover {
+        background: #f8fafc;
+    }
+
+    .rank-num {
+        width: 40px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: #64748b;
+    }
+
+    .list-company-name {
+        flex: 1;
+        font-weight: 600;
+        font-size: 1.1rem;
+        padding-left: 15px;
+    }
+
+    .list-score {
+        font-weight: 700;
+        font-size: 1.25rem;
+        color: #2CB1BC;
+        width: 100px;
+        text-align: right;
+    }
+
+    /* 既存ボタンのカスタマイズ適用 */
+    .btn-info {
+        background: #607D8B;
+        border-radius: 8px;
+        margin-left: 20px;
+    }
+</style>
+@stop
+
+@section('content')
+<div class="container-fluid">
+
+    @if($ranking->isNotEmpty())
+    <div class="podium-container">
+        @foreach($ranking->take(3) as $index => $company)
+        <div class="podium-card rank-{{ $index + 1 }}">
+            <span class="medal-icon">
+                @if($index === 0) 🥇 @elseif($index === 1) 🥈 @else 🥉 @endif
+            </span>
+            <div class="company-name">{{ $company->name }}</div>
+            <div class="score-display">
+                {{ $company->total_score }}<span class="score-unit">pt</span>
+            </div>
+            <div class="mt-3">
+                <a href="{{ route('companies.show', $company->id) }}" class="btn btn-sm btn-outline-primary">詳細</a>
+                <a href="{{ route('companies.compare', $company->id) }}" class="btn btn-sm btn-info">比較</a>
+            </div>
+        </div>
+        @endforeach
+    </div>
+
+    <h5 class="font-weight-bold mb-3 px-2">4位以下の企業</h5>
+    <div class="ranking-list mb-5">
+        @foreach($ranking->slice(3) as $index => $company)
+        <div class="ranking-item">
+            <div class="rank-num">{{ $index + 4 }}</div>
+            <div class="list-company-name">{{ $company->name }}</div>
+            <div class="list-score">{{ $company->total_score }}<span class="small ml-1">pt</span></div>
+            <a href="{{ route('companies.compare', $company->id) }}" class="btn btn-info btn-sm ml-3">比較</a>
+        </div>
+        @endforeach
+    </div>
+    @else
+    <div class="text-center py-5">
+        <p class="text-muted">企業データがまだありません。まずは企業を登録しましょう。</p>
+        <a href="{{ route('companies.index') }}" class="btn btn-primary">企業登録へ</a>
+    </div>
+    @endif
+
 </div>
 @stop
