@@ -291,14 +291,14 @@ return [
 
     'menu' => [
         [
-            'text' => '会社一覧',
-            'route' => 'companies.index',
-            'icon' => 'fas fa-building',
-        ],
-        [
             'text' => '転職軸',
             'route' => 'criteria.index',
             'icon' => 'fas fa-list',
+        ],
+        [
+            'text' => '会社一覧',
+            'route' => 'companies.index',
+            'icon' => 'fas fa-building',
         ],
         [
             'text' => '総合スコア',
