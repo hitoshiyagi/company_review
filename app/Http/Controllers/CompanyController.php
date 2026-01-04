@@ -128,9 +128,14 @@ class CompanyController extends Controller
         return redirect()->route('companies.index')->with('success', '会社を削除しました。');
     }
 
+    /**
+     * ランキング（自分のデータのみに修正）
+     */
     public function ranking()
     {
-        $ranking = Company::with('evaluations.criterion')
+        // auth()->user()->companies() を経由することで、自分のデータのみ取得
+        $ranking = auth()->user()->companies()
+            ->with('evaluations.criterion')
             ->get()
             ->sortByDesc('total_score')
             ->values();
@@ -140,16 +145,29 @@ class CompanyController extends Controller
         return view('companies.ranking', compact('ranking', 'criteria'));
     }
 
+    /**
+     * 会社比較（セキュリティ強化と現職取得の修正）
+     */
     public function compare(Company $company)
     {
+        // 【セキュリティ】比較対象が自分のものでない場合はエラー
+        if ($company->user_id !== auth()->id()) {
+            abort(403);
+        }
+
         $user = auth()->user();
 
-        // 現職を取得
-        $currentCompany = Company::where('type', 'current')->first();
+        // 【重要】自分の会社の中から「現職」を取得
+        $currentCompany = $user->companies()->where('type', 'current')->first();
+
+        // 現職が登録されていない場合のハンドリング（エラー回避）
+        if (!$currentCompany) {
+            return redirect()->route('companies.index')->with('error', '比較には「現職」の登録が必要です。');
+        }
 
         $criteria = $user->criteria;
 
-        // 各会社の「重み付き」スコアを配列化
+        // スコア算出（ここはそのままでOKですが、$currentCompanyの取得元が安全になったので正常に動作します）
         $currentScores = $criteria->map(function ($criterion) use ($currentCompany, $user) {
             $score = optional(
                 $currentCompany->evaluations
@@ -157,7 +175,6 @@ class CompanyController extends Controller
                     ->where('user_id', $user->id)
                     ->first()
             )->score ?? 0;
-
             return $score * $criterion->weight;
         });
 
@@ -168,15 +185,10 @@ class CompanyController extends Controller
                     ->where('user_id', $user->id)
                     ->first()
             )->score ?? 0;
-
             return $score * $criterion->weight;
         });
 
-        // ★ ここに追加！
-        $maxScore = max(
-            $currentScores->max(),
-            $targetScores->max()
-        );
+        $maxScore = max($currentScores->max() ?? 0, $targetScores->max() ?? 0);
 
         return view('companies.compare', compact(
             'company',
@@ -186,5 +198,4 @@ class CompanyController extends Controller
             'targetScores',
             'maxScore'
         ));
-    }
-}
+    }}
