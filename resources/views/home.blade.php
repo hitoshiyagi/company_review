@@ -1,4 +1,4 @@
-<!-- @extends('adminlte::page')
+@extends('adminlte::page')
 
 @section('title', 'Dashboard')
 
@@ -7,30 +7,7 @@
 @stop
 
 @section('content')
-<p>Welcome to this beautiful admin panel.</p>
-@stop
 
-@section('css')
-{{-- <link rel="stylesheet" href="/css/admin_custom.css"> --}}
-@stop
-
-@section('js')
-<script>
-    console.log('Hi!');
-</script>
-@stop -->
-
-@extends('adminlte::page')
-
-@section('title', 'ダッシュボード')
-
-@section('content_header')
-<h1 class="font-weight-bold text-dark">
-    <i class="fas fa-tachometer-alt mr-2"></i>ダッシュボード
-</h1>
-@stop
-
-@section('content')
 <div class="container-fluid">
 
     <div class="row">
@@ -144,40 +121,16 @@
         </div>
     </div>
 </div>
+
+
 @stop
 
 @section('css')
-<style>
-    /* タイムラインの見やすさ調整 */
-    .timeline-item {
-        border-radius: 8px !important;
-        border: 1px solid #e9ecef;
-    }
-
-    .timeline-header {
-        border-bottom: 1px solid #f4f4f4 !important;
-        font-weight: 700 !important;
-        font-size: 1.1rem !important;
-    }
-
-    .timeline-header a {
-        color: inherit;
-        text-decoration: none;
-    }
-
-    .timeline-header a:hover {
-        text-decoration: underline;
-    }
-
-    /* 全体の背景色調整 */
-    .content-wrapper {
-        background-color: #f4f6f9;
-    }
-</style>
+{{-- <link rel="stylesheet" href="/css/admin_custom.css"> --}}
 @stop
 
 @section('js')
 <script>
-    console.log('Static Dashboard Loaded');
+    console.log('Hi!');
 </script>
 @stop
