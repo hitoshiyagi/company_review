@@ -10,11 +10,8 @@
         /* --- Base Styles --- */
         :root {
             --primary-color: #102a43;
-            /* 深いネイビー（ロゴベース） */
             --secondary-color: #243b53;
-            /* 少し明るいネイビー */
             --accent-color: #2cb1bc;
-            /* 清潔感のあるシアンブルー（アクセント） */
             --text-dark: #102a43;
             --text-gray: #486581;
             --bg-light: #f0f4f8;
@@ -75,31 +72,16 @@
             transform: translateY(-2px);
         }
 
-        /* ログインボタン（オレンジ） */
         .btn-success {
             background-color: #f39c12;
-            /* 視認性の高いオレンジ */
             color: var(--white);
             margin-right: 15px;
-            /* 隣のボタンとの隙間 */
             box-shadow: 0 4px 6px rgba(243, 156, 18, 0.4);
-            /* オレンジ色の影 */
         }
 
         .btn-success:hover {
             background-color: #e67e22;
-            /* ホバー時は少し濃いオレンジへ */
             transform: translateY(-2px);
-        }
-
-        .btn-outline {
-            border: 2px solid var(--white);
-            color: var(--white);
-        }
-
-        .btn-outline:hover {
-            background-color: var(--white);
-            color: var(--primary-color);
         }
 
         .section-title {
@@ -136,7 +118,6 @@
 
         .logo img {
             height: 60px;
-            /* ロゴの高さ調整 */
         }
 
         /* --- Hero Section --- */
@@ -181,7 +162,6 @@
             position: relative;
         }
 
-        /* CSSで簡易的なアプリ画面イメージを作成 */
         .app-mockup {
             background: var(--white);
             border-radius: 16px;
@@ -351,8 +331,21 @@
             margin-top: 10px;
         }
 
-        /* --- Responsive --- */
+        /* --- Display Logic --- */
+        .sp-only {
+            display: none;
+        }
+
+        /* --- Responsive Styles --- */
         @media (max-width: 768px) {
+            .pc-only {
+                display: none !important;
+            }
+
+            .sp-only {
+                display: block;
+            }
+
             .hero {
                 padding-top: 100px;
                 text-align: center;
@@ -371,18 +364,7 @@
                 font-size: 1.6rem;
             }
 
-
-            @media (max-width: 768px) {
-                .pc-only {
-                    display: none !important;
-                }
-
-                .sp-only {
-                    display: ;
-                }
-            }
-
-            /* --- ハンバーガーメニュー --- */
+            /* --- Hamburger Button --- */
             .hamburger {
                 width: 28px;
                 cursor: pointer;
@@ -390,6 +372,7 @@
                 flex-direction: column;
                 justify-content: space-between;
                 height: 20px;
+                z-index: 1001;
             }
 
             .hamburger span {
@@ -397,11 +380,13 @@
                 height: 3px;
                 background: var(--primary-color);
                 border-radius: 3px;
+                transition: 0.3s;
             }
 
-            /* --- モバイルメニュー --- */
+            /* --- Mobile Menu --- */
             .mobile-menu {
                 display: none;
+                /* JSで.activeを付与して表示 */
                 position: absolute;
                 right: 20px;
                 top: 70px;
@@ -409,8 +394,12 @@
                 box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
                 border-radius: 8px;
                 padding: 10px 0;
-                width: 150px;
+                width: 180px;
                 z-index: 999;
+            }
+
+            .mobile-menu.active {
+                display: block;
             }
 
             .mobile-menu li {
@@ -422,6 +411,11 @@
                 padding: 12px 20px;
                 color: var(--primary-color);
                 font-weight: bold;
+                border-bottom: 1px solid #f0f4f8;
+            }
+
+            .mobile-menu li:last-child a {
+                border-bottom: none;
             }
 
             .mobile-menu a:hover {
@@ -439,17 +433,15 @@
                 <img src="{{ asset('vendor/adminlte/dist/img/logo.png') }}" alt="Logo">
             </div>
             <nav class="nav-menu">
-                <a href="{{ route('register') }}" class="btn btn-primary pc-only">無料で始める</a>
                 <a href="{{ route('login') }}" class="btn btn-success pc-only">ログインする</a>
+                <a href="{{ route('register') }}" class="btn btn-primary pc-only">無料で始める</a>
 
-                <!-- ハンバーガー（スマホ）-->
                 <div class="hamburger sp-only" id="hamburger">
                     <span></span>
                     <span></span>
                     <span></span>
                 </div>
 
-                <!-- ハンバーガーメニュー展開部分（テキストリンク）-->
                 <ul class="mobile-menu sp-only" id="mobileMenu">
                     <li><a href="{{ route('register') }}">無料で始める</a></li>
                     <li><a href="{{ route('login') }}">ログインする</a></li>
@@ -563,24 +555,30 @@
     <footer>
         <div class="container">
             <div class="logo">
-                <div class="logo">
-                    <img src="{{ asset('vendor/adminlte/dist/img/logo_W.png') }}" alt="Logo">
-                </div>
+                <img src="{{ secure_asset('vendor/adminlte/dist/img/logo_W.png') }}" alt="Logo">
             </div>
             <p>&copy; 2025 JobScore. All Rights Reserved.</p>
         </div>
     </footer>
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    const hamburger = document.getElementById("hamburger");
-    const mobileMenu = document.getElementById("mobileMenu");
 
-    hamburger.addEventListener("click", function () {
-        mobileMenu.style.display =
-            mobileMenu.style.display === "block" ? "none" : "block";
-    });
-});
-</script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const hamburger = document.getElementById("hamburger");
+            const mobileMenu = document.getElementById("mobileMenu");
+
+            hamburger.addEventListener("click", function() {
+                // クラスの付け外しで表示・非表示を切り替え
+                mobileMenu.classList.toggle("active");
+            });
+
+            // メニュー以外をクリックした時に閉じる（利便性のため）
+            document.addEventListener("click", function(event) {
+                if (!hamburger.contains(event.target) && !mobileMenu.contains(event.target)) {
+                    mobileMenu.classList.remove("active");
+                }
+            });
+        });
+    </script>
 
 </body>
 
