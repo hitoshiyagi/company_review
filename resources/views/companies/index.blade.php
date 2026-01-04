@@ -4,234 +4,251 @@
 @section('title', '会社一覧')
 
 @section('content_header')
-<h1>会社一覧</h1>
+<h1 class="font-weight-bold">会社一覧</h1>
 @stop
+
 @section('css')
 <style>
-    /* --- 0. 全体のベース設定 --- */
-    /* Noto Sans JP を Sawarabi Gothic + Inter に変更 */
+    /* --- 全体のベース設定 --- */
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Sawarabi+Gothic&display=swap');
-
-    :root {
-        /* ... (その他の変数は維持) ... */
-    }
 
     body,
     .wrapper {
-        /* 日本語フォントを優先し、欧文（数字や英語）をInterに設定 */
         font-family: 'Sawarabi Gothic', 'Inter', sans-serif !important;
-        background-color: var(--bg-light) !important;
-        color: var(--text-dark);
-        /* 本文のフォントサイズを微調整して可読性アップ */
+        background-color: #f0f4f8 !important;
+        color: #102a43;
         font-size: 0.9375rem;
     }
 
-    /* 見出しの太さを強化 */
     h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6,
     .card-title {
-        font-family: 'Inter', 'Sawarabi Gothic', sans-serif !important;
         font-weight: 700 !important;
     }
 
-    /* --------------------
-    ボタンデザイン（落ち着いたトーン）
--------------------- */
-    .btn {
-        border: none;
-        border-radius: 10px;
-        padding: 0.5rem 1rem;
-        font-weight: 600;
-        transition: all 0.25s ease;
-        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.08);
+    /* --- テーブルのレイアウト調整 --- */
+    .table-container {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
     }
 
-    /* プライマリ（メインCTA/応募・登録など - アクセントカラーを使用） */
+    .table {
+        table-layout: fixed;
+        /* 列幅を固定 */
+        width: 100%;
+        margin-bottom: 0 !important;
+    }
+
+    /* 列ごとの幅指定 */
+    .col-name {
+        width: 200px;
+    }
+
+    .col-desc {
+        width: auto;
+    }
+
+    .col-type {
+        width: 150px;
+    }
+
+    .col-score {
+        width: 100px;
+    }
+
+    .col-action {
+        width: 200px;
+    }
+
+    .table th {
+        background-color: #f8fafc;
+        border-bottom: 2px solid #e2e8f0 !important;
+        color: #486581;
+        font-weight: 700;
+        text-align: center;
+    }
+
+    .table td {
+        vertical-align: middle !important;
+        padding: 12px 15px !important;
+    }
+
+    /* 長いテキストを「...」で省略 */
+    .text-truncate {
+        display: block;
+        width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    /* 操作ボタン列の固定 */
+    .action-column {
+        white-space: nowrap !important;
+        text-align: center;
+    }
+
+    /* --- ボタンデザイン --- */
+    .btn {
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.2s;
+    }
+
+    .btn-sm {
+        padding: 5px 12px;
+        font-size: 0.85rem;
+    }
+
     .btn-primary {
         background: #2CB1BC;
-        /* アクセントカラーのティール */
-        color: #fff;
-        box-shadow: 0 4px 8px rgba(44, 177, 188, 0.4);
-        /* ティールに合わせた影 */
+        border: none;
     }
 
-    .btn-primary:hover {
-        background: #1f8b94;
-        transform: translateY(-2px);
-    }
-
-    /* 成功（アクションが成功した後の確認 - 落ち着いたブルー） */
     .btn-success {
         background: #4A90E2;
-        /* 落ち着いたブルー */
-        color: #fff;
+        border: none;
     }
 
-    .btn-success:hover {
-        background: #357ab8;
-        transform: translateY(-2px);
-    }
-
-    /* 情報（詳細を見る、中立的なアクション - グレー系） */
     .btn-info {
         background: #607D8B;
-        /* セカンダリカラーの落ち着いたグレー */
-        color: #fff;
+        border: none;
     }
 
-    .btn-info:hover {
-        background: #455A64;
-        transform: translateY(-2px);
-    }
-
-    /* 警告（重要なお知らせ、確認 - オレンジ） */
     .btn-warning {
         background: #FF9800;
-        /* 明瞭なオレンジ */
-        color: #fff;
+        border: none;
+        color: white !important;
     }
 
-    .btn-warning:hover {
-        background: #e68900;
-        transform: translateY(-2px);
-    }
-
-    /* 危険（削除、離脱 - レッド） */
     .btn-danger {
         background: #C62828;
-        /* 深みのあるレッド */
-        color: #fff;
+        border: none;
     }
 
-    .btn-danger:hover {
-        background: #9a1f1f;
-        transform: translateY(-2px);
-    }
-
-    /* アウトラインボタン（ログインなど、プライマリより控えめなアクションに） */
-    .btn-outline-primary {
-        background: transparent;
-        border: 2px solid #2CB1BC;
-        color: #2CB1BC;
-        box-shadow: none;
-    }
-
-    .btn-outline-primary:hover {
-        background: #2CB1BC;
-        color: #fff;
-        transform: translateY(-2px);
-        box-shadow: 0 3px 6px rgba(44, 177, 188, 0.3);
+    .btn:hover {
+        transform: translateY(-1px);
+        filter: brightness(0.9);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 </style>
 @stop
+
 @section('content')
-<div class="card">
-    <div class="card-header">
-        <!-- モーダル呼び出しボタン -->
+<div class="card shadow-sm table-container">
+    <div class="card-header bg-white">
         <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createCompanyModal">
-            新規会社登録
+            <i class="fas fa-plus-circle mr-1"></i> 新規会社登録
         </button>
     </div>
 
-    <!-- 新規会社登録モーダル -->
     <div class="modal fade" id="createCompanyModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <form action="{{ route('companies.store') }}" method="POST">
                     @csrf
                     <div class="modal-header">
-                        <h5 class="modal-title">会社新規登録</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        <h5 class="modal-title font-weight-bold">会社新規登録</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                     </div>
                     <div class="modal-body">
-                        <div class="mb-3">
-                            <label>会社名</label>
-                            <input type="text" name="name" class="form-control" required>
+                        <div class="form-group mb-3">
+                            <label class="font-weight-bold">会社名</label>
+                            <input type="text" name="name" class="form-control" placeholder="例：株式会社キャリアアップ" required>
                         </div>
-                        <div class="mb-3">
-                            <label>説明</label>
-                            <textarea name="description" class="form-control"></textarea>
+                        <div class="form-group mb-3">
+                            <label class="font-weight-bold">説明</label>
+                            <textarea name="description" class="form-control" rows="2" placeholder="メモなど"></textarea>
                         </div>
-                        <div class="mb-4">
+                        <div class="form-group mb-4">
+                            <label class="font-weight-bold">状況</label>
                             <select name="type" class="form-control">
-                                <option value="interest" {{ old('type', $company->type ?? 'interest') == 'interest' ? 'selected' : '' }}>
-                                    見学／気になる企業
-                                </option>
-                                <option value="desired" {{ old('type', $company->type ?? '') == 'desired' ? 'selected' : '' }}>
-                                    志望企業
-                                </option>
-                                <option value="current" {{ old('type', $company->type ?? '') == 'current' ? 'selected' : '' }}>
-                                    現職
-                                </option>
+                                <option value="interest">見学／気になる企業</option>
+                                <option value="desired">志望企業</option>
+                                <option value="current">現職</option>
                             </select>
                         </div>
 
-                        <h5>評価スコア（各10点満点）</h5>
+                        <h5 class="font-weight-bold border-bottom pb-2">評価スコア（10点満点）</h5>
                         @if($criteria->isEmpty())
-                        <p class="text-muted">評価軸が登録されていません。まず評価軸を作成してください。</p>
+                        <p class="text-muted small">評価軸がありません。設定から作成してください。</p>
                         @else
-                        @foreach($criteria->take(5) as $criterion) {{-- 最大5項目 --}}
-                        <div class="mb-2">
-                            <label>{{ $criterion->name }}</label>
-                            <input type="number"
-                                name="scores[{{ $criterion->id }}]"
-                                min="0"
-                                max="10"
-                                class="form-control"
-                                value="0">
+                        @foreach($criteria->take(5) as $criterion)
+                        <div class="form-group d-flex align-items-center mb-2">
+                            <label class="mb-0 flex-grow-1">{{ $criterion->name }}</label>
+                            <input type="number" name="scores[{{ $criterion->id }}]" min="0" max="10" class="form-control col-3" value="0">
                         </div>
                         @endforeach
                         @endif
                     </div>
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">登録</button>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
+                        <button type="submit" class="btn btn-primary">登録する</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 
-    <div class="card-body">
+    <div class="card-body p-0">
         @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
+        <div class="alert alert-success m-3">{{ session('success') }}</div>
         @endif
 
-        <table class="table table-striped table-hover m-0">
-            <thead>
-                <tr>
-                    <th>会社名</th>
-                    <th>説明</th>
-                    <th>状況</th>
-                    <th>合計点数</th>
-                    <th>操作</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($companies as $company)
-
-                <tr>
-                    <td>{{ $company->name }}</td>
-                    <td>{{ $company->description }}</td>
-                    <td>{{ $company->type_label }}</td>
-                    <td>{{ $company->total_score }}</td>
-                    <td>
-                        <a href="{{ route('companies.show', $company) }}" class="btn btn-info btn-sm">詳細</a>
-                        <a href="{{ route('companies.edit', $company) }}" class="btn btn-warning btn-sm">編集</a>
-                        <form action="{{ route('companies.destroy', $company) }}" method="POST" style="display:inline;">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('削除してもよいですか？')">削除</button>
-                        </form>
-                    </td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th class="col-name text-left">会社名</th>
+                        <th class="col-desc text-left">説明</th>
+                        <th class="col-type">状況</th>
+                        <th class="col-score">スコア</th>
+                        <th class="col-action">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($companies as $company)
+                    <tr>
+                        <td class="text-left">
+                            <span class="text-truncate font-weight-bold" title="{{ $company->name }}">
+                                {{ $company->name }}
+                            </span>
+                        </td>
+                        <td class="text-left">
+                            <span class="text-truncate text-muted" title="{{ $company->description }}">
+                                {{ $company->description ?: '---' }}
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            <span class="badge badge-pill badge-light border px-3 py-2">
+                                {{ $company->type_label }}
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            <span class="h5 mb-0 font-weight-bold text-primary">{{ $company->total_score }}</span>
+                        </td>
+                        <td class="action-column">
+                            <a href="{{ route('companies.show', $company) }}" class="btn btn-info btn-sm">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="{{ route('companies.edit', $company) }}" class="btn btn-warning btn-sm">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <form action="{{ route('companies.destroy', $company) }}" method="POST" class="d-inline">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('削除してもよいですか？')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 @stop
