@@ -555,7 +555,7 @@
     <footer>
         <div class="container">
             <div class="logo">
-                <img src="{{ secure_asset('vendor/adminlte/dist/img/logo_W.png') }}" alt="Logo">
+                <img src="{{ secure_asset('vendor/adminlte/dist/img/logo_w.png') }}" alt="Logo">
             </div>
             <p>&copy; 2025 JobScore. All Rights Reserved.</p>
         </div>
