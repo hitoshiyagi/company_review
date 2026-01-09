@@ -59,9 +59,10 @@
                                     {{ __('ログイン') }}
                                 </button>
 
-                                <div class="mt-2 text-muted" style="font-size: 0.8rem;">
-                                    <p class="mb-0">【テスト用アカウント】</p>
-                                    <span>ID: test@example.com / Pass: test1234</span>
+                                <div class="mt-3 text-muted" style="font-size: 0.8rem;">
+                                    <strong>【テスト用アカウント】</strong>
+                                    <div class="mt-1">メールアドレス: test@example.com</div>
+                                    <div>パスワード: test1234</div>
                                 </div>
 
                                 @if (Route::has('password.request'))
