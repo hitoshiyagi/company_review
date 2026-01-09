@@ -59,6 +59,11 @@
                                     {{ __('ログイン') }}
                                 </button>
 
+                                <div class="mt-2 text-muted" style="font-size: 0.8rem;">
+                                    <p class="mb-0">【テスト用アカウント】</p>
+                                    <span>ID: test@example.com / Pass: test1234</span>
+                                </div>
+
                                 @if (Route::has('password.request'))
                                 <a class="btn btn-link" href="{{ route('password.request') }}">
                                     {{ __('Forgot Your Password?') }}
